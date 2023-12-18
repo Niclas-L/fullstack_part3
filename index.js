@@ -26,6 +26,12 @@ let persons = [
   },
 ];
 
+const generateId = () => {
+  const min = 10;
+  const max = 10000000;
+  return Math.floor(Math.random() * (max - min) + min);
+};
+
 app.get("/api/persons", (request, response) => {
   response.json(persons);
 });
@@ -53,6 +59,17 @@ app.delete("/api/persons/:id", (request, response) => {
   persons = persons.filter((person) => person.id !== id);
 
   response.status(204).end();
+});
+
+app.post("/api/persons", (request, response) => {
+  const person = {
+    name: request.body.name,
+    number: request.body.number,
+    id: generateId(),
+  };
+  persons = persons.concat(person);
+  console.log(person);
+  response.json(person);
 });
 
 const PORT = 3001;

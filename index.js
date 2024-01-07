@@ -18,14 +18,13 @@ app.use(express.json());
 app.use(requestLogger);
 app.use(cors());
 
-
 app.get("/api/persons", (request, response) => {
   Person.find({}).then((person) => {
     response.json(person);
   });
 });
 
-app.get("/api/persons/:id", (request, response, next) => {
+app.get("/api/persons/:id", (request, response) => {
   Person.findById(request.params.id).then((person) => {
     response.json(person);
   });
@@ -34,7 +33,7 @@ app.get("/api/persons/:id", (request, response, next) => {
 app.get("/info", (request, response) => {
   const date = new Date();
   Person.find({}).then((person) => {
-    amount = person.length;
+    const amount = person.length;
     response.send(
       `<p>Phonebook has info for ${amount} people</p><p>${date}</p>`
     );
@@ -43,7 +42,7 @@ app.get("/info", (request, response) => {
 
 app.delete("/api/persons/:id", (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then((result) => {
+    .then(() => {
       response.status(204).end();
     })
     .catch((error) => next(error));

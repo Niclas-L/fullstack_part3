@@ -26,24 +26,20 @@ app.get("/api/persons", (request, response) => {
   });
 });
 
-/*
-app.get("/info", (request, response) => {
-  const amount = persons.length;
-  const date = new Date();
-  response.send(`<p>Phonebook has info for ${amount} people</p><p>${date}</p>`);
-});
-*/
-
-app.get("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  const person = persons.find((person) => person.id === id);
-
-  if (person) {
+app.get("/api/persons/:id", (request, response, next) => {
+  Person.findById(request.params.id).then((person) => {
     response.json(person);
-  } else {
-    response.statusMessage = "Person does not exist";
-    response.status(404).end();
-  }
+  });
+});
+
+app.get("/info", (request, response) => {
+  const date = new Date();
+  Person.find({}).then((person) => {
+    amount = person.length;
+    response.send(
+      `<p>Phonebook has info for ${amount} people</p><p>${date}</p>`
+    );
+  });
 });
 
 app.delete("/api/persons/:id", (request, response, next) => {

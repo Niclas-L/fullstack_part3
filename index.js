@@ -31,9 +31,9 @@ const generateId = () => {
 };
 
 app.get("/api/persons", (request, response) => {
-  Person.find({}).then(person => {
+  Person.find({}).then((person) => {
     response.json(person);
-  })
+  });
 });
 
 app.get("/info", (request, response) => {
@@ -64,26 +64,18 @@ app.delete("/api/persons/:id", (request, response) => {
 app.post("/api/persons", (request, response) => {
   const body = request.body;
 
-  if (!body.name || !body.number) {
-    return response.status(400).json({
-      error: "name or number missing",
-    });
+  if (body.name === undefined || body.number === undefined) {
+    return response.status(400).json({ error: "content missing" });
   }
 
-  if (persons.find((person) => person.name === body.name)) {
-    return response.status(400).json({
-      error: "name must be unique",
-    });
-  }
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  });
 
-  const person = {
-    name: request.body.name,
-    number: request.body.number,
-    id: generateId(),
-  };
-  persons = persons.concat(person);
-  console.log(person);
-  response.json(person);
+  person.save().then((savedPerson) => {
+    response.json(savedPerson);
+  });
 });
 
 app.use(unknownEndpoint);

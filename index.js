@@ -26,11 +26,13 @@ app.get("/api/persons", (request, response) => {
   });
 });
 
+/*
 app.get("/info", (request, response) => {
   const amount = persons.length;
   const date = new Date();
   response.send(`<p>Phonebook has info for ${amount} people</p><p>${date}</p>`);
 });
+*/
 
 app.get("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
@@ -67,6 +69,22 @@ app.post("/api/persons", (request, response) => {
   person.save().then((savedPerson) => {
     response.json(savedPerson);
   });
+});
+
+app.put("/api/persons/:id", (request, response, next) => {
+  const body = request.body;
+
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: body.id,
+  };
+
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then((updatedPerson) => {
+      response.json(updatedPerson);
+    })
+    .catch((error) => next(error));
 });
 
 const unknownEndpoint = (request, response) => {
